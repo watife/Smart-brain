@@ -1,0 +1,17 @@
+.navigation {
+    display: flex;
+    justify-content: flex-end;
+    padding-right: 3rem;
+    padding-top: 1.5rem;
+}
+
+.navigation__pg {
+    font-size: 1.5rem;
+    text-decoration: underline;
+    color: black;
+
+}
+
+.navigation__pg:hover {
+    color: gray;
+}
