@@ -1,34 +1,76 @@
-import React from 'react';
+import React, {Component} from 'react';
 
-const SignIn = ({onRouteChange}) => {
-    return (
-        <div>
-            <article className="br3 ba  b--black-10 mv4 w-100 w-50-m w-25-l mw6 shadow-5 center">
-                <main className="pa4 black-80">
-                    <div className="measure">
-                        <fieldset id="sign_up" className="ba b--transparent ph0 mh0">
-                            <legend className="f1 fw6 ph0 mh0">Sign In</legend>
-                            <div className="mt3">
-                                <label className="db fw6 lh-copy f6" htmlFor="email-address">Email</label>
-                                <input className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" type="email" name="email-address" id="email-address" />
-                            </div>
-                            <div className="mv3">
-                                <label className="db fw6 lh-copy f6" htmlFor="password">Password</label>
-                                <input className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" type="password" name="password" id="password" required/>
-                            </div>
+class SignIn extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            signInEmail: '',
+            signInPassword: ''
+        }
+        
+    }
+    
+    // EVENT LISTNERS FOR EMAIL AND PASSWORD
+    
+    onEmailChange = (event) => {
+        this.setState({ signInEmail: event.target.value })
+    }
 
-                        </fieldset>
-                        <div className="">
-                            <input className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib" type="submit" value="Sign in" onClick = {() => onRouteChange('Home')} />
+    onPasswordChange = (event) => {
+        this.setState({ signInPassword: event.target.value })
+    }
+
+    onSubmitSignIn = () => {
+        // run a fetch to connect with the backend and normally, fetch does a get request by default but we want to do a post request, hence, we can pass a second parameter which is the object to fetch just to specify the kind of request we are making 
+        fetch('https://warm-savannah-51601.herokuapp.com/signin', {
+            method: 'post',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                email: this.state.signInEmail,
+                password: this.state.signInPassword
+            })
+        })
+        .then(response => response.json())
+        .then(user => {
+            if (user.id) {
+                this.props.loadUser(user);
+                this.props.onRouteChange('Home');
+            }
+        })
+        
+    }
+    render() {
+        const { onRouteChange } = this.props
+        return ( 
+            <div>
+                <article className="br3 ba  b--black-10 mv4 w-100 w-50-m w-25-l mw6 shadow-5 center">
+                    <main className="pa4 black-80">
+                        <div className="measure">
+                            <fieldset id="sign_up" className="ba b--transparent ph0 mh0">
+                                <legend className="f1 fw6 ph0 mh0">Sign In</legend>
+                                <div className="mt3">
+                                    <label className="db fw6 lh-copy f6" htmlFor="email-address">Email</label>
+                                    <input onChange = {this.onEmailChange} className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" type="email" name="email-address" id="email-address" />
+                                </div>
+                                <div className="mv3">
+                                    <label className="db fw6 lh-copy f6" htmlFor="password">Password</label>
+                                    <input onChange = {this.onPasswordChange} className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" type="password" name="password" id="password" required />
+                                </div>
+
+                            </fieldset>
+                            <div className="">
+                                <input className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib" type="submit" value="Sign in" onClick={this.onSubmitSignIn} />
+                            </div>
+                            <div className="lh-copy mt3">
+                                <p className="f6 link dim black db pointer" onClick={() => onRouteChange('Register')}>Register</p>
+                            </div>
                         </div>
-                        <div className="lh-copy mt3">
-                            <p className="f6 link dim black db pointer" onClick={() => onRouteChange('Register')}>Register</p>
-                        </div>
-                    </div>
-                </main>
-            </article>
-        </div>
-    )
+                    </main>
+                </article>
+            </div>
+        )
+    }
 }
+
 
 export default SignIn;
